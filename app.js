@@ -1,20 +1,20 @@
-import dotenv from 'dotenv';
-import 'express-async-errors';
-import EventEmitter from 'events';
-import express from 'express';
-import http from 'http';
-import { Server as socketIo } from 'socket.io'; 
-import connectDB from './config/connect.js';
-import notFoundMiddleware from './middleware/not-found.js';
-import errorHandlerMiddleware from './middleware/error-handler.js';
-import authMiddleware from './middleware/authentication.js';
+import dotenv from "dotenv";
+import "express-async-errors";
+import EventEmitter from "events";
+import express from "express";
+import http from "http";
+import { Server as socketIo } from "socket.io";
+import connectDB from "./config/connect.js";
+import notFoundMiddleware from "./middleware/not-found.js";
+import errorHandlerMiddleware from "./middleware/error-handler.js";
+import authMiddleware from "./middleware/authentication.js";
 
 // Routers
-import authRouter from './routes/auth.js';
-import rideRouter from './routes/ride.js';
+import authRouter from "./routes/auth.js";
+import rideRouter from "./routes/ride.js";
 
 // Import socket handler
-import handleSocketConnection from './controllers/sockets.js';
+import handleSocketConnection from "./controllers/sockets.js";
 
 dotenv.config();
 
@@ -44,12 +44,21 @@ app.use("/ride", authMiddleware, rideRouter);
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
+app.get("/", (_, res) => {
+  res.status(200).send({
+    success: true,
+    message: "server has been started",
+  });
+});
+
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI);
     server.listen(process.env.PORT || 3000, "0.0.0.0", () =>
       console.log(
-        `HTTP server is running on port http://localhost:${process.env.PORT || 3000}`
+        `HTTP server is running on port http://localhost:${
+          process.env.PORT || 3000
+        }`
       )
     );
   } catch (error) {
